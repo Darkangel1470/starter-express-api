@@ -4,12 +4,21 @@ const { initFirestore, addCard, getCard, deleteCard, updateCard } = require('./f
 const app = express()
 
 
-app.use(bodyParser.json)
+// app.use(bodyParser.json);
 
 app.get('/', (req, res)=>{
     res.send("hellow");
 })
-app.listen(process.env.PORT||3000,()=>{
+
+app.get('/test',(req, res)=>{
+    res.json({name: 'nihar',id: 10});
+});
+
+// app.listen(3000||process.env.PORT,()=>{
+//     console.log('server running on http://localhost:3000')
+// })
+
+app.listen(3000,()=>{
     console.log('server running on http://localhost:3000')
 })
 
