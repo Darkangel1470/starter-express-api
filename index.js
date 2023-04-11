@@ -6,22 +6,10 @@ const app = express()
 
 app.use(bodyParser.json)
 
-
-
-
-
-// app.all('/', (req, res) => {
-    
-//     res.send('Have good afternoon baby spoon!')
-// })
-
 app.get('/', (req, res)=>{
     res.send("hellow");
 })
-app.listen(process.env.PORT, ()=>{
-    console.log('server running on http://localhost:3000')
-})
-app.listen(3000, ()=>{
+app.listen(process.env.PORT||3000,()=>{
     console.log('server running on http://localhost:3000')
 })
 
