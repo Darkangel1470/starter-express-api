@@ -11,7 +11,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT || 3000,()=>{
     console.log('server running on http://localhost:3000')
 })
 
