@@ -102,18 +102,33 @@ module.exports = {
         }
     },
     registerUser: async function(email, pass){
-        this.db.collection('users').add({
-            email: email,
-            pass: pass
-        })
+        var res = await this.db.collection('users').where('email','==', email).get();
+        console.log('res.empty :>> ', res.empty);
+        if(!res.empty){
+            return false;
+        }else{
+            this.db.collection('users').add({
+                email: email,
+                pass: pass
+            })
+            return true;
+        }
     },
     loginUser: async function(email,pass){
-        var snapshot = await this.db.collection('users').where('email', '==', email).get();
-        snapshot.forEach(user =>{
-            console.log('user :>> ', user.data());
-            return (user.data().pass == pass)?'success': 'wrong pass';
-        })
-        
+        var snapshot = await this.db.collection('users').where('email','==', email).get();
+        if(snapshot.empty){
+            console.log('wrong email')
+            return false;
+        }else{
+            snapshot.forEach(user =>{
+                if(pass.trim() == user.data().pass.trim()){
+                    console.log('login success')
+                    return true
+                }
+                console.log('wrong password')
+                return 'Wrong password';
+            })
+        }
     }
 }
 

@@ -59,5 +59,45 @@
 		</div>
 	</div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>	
+	var pass;
+	var cpass;
+	var email;
+	$(document).ready(function(){
+		var btn = $('input[type=button]');
+		var passinp = $('input[name=pass]')
+		var cpassinp = $('input[name=cpass]')
+		var emailinp = $('input[name=email]')
+		btn.prop('disabled', true);
+		$('input[name=cpass],input[name=pass],input[name=email]').on('change', function(){
+			btn.prop('disabled', true);
+			pass = passinp.val();
+			cpass = cpassinp.val();
+			email = emailinp.val();
+			if(pass==cpass && email.trim()!== ""){
+				console.log('Matched')
+				btn.prop('disabled', false);
+			}
+			console.log(`${pass} == ${cpass}`);
+		})
+		btn.click(handleRegister);
+	})
+	async function handleRegister() {
+		axios.post('/register', {
+			email: email,
+			pass: pass
+		}).then(function(res){
+			console.log(res);
+			if(res.data){
+				$('#successalert').prop('hidden', false);
+				document.location.href='/home';
+			}else{
+				$('#successalert').prop('hidden', false);
+			}
+		})
+	}
+</script>
 </body>
 </html>

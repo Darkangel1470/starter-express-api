@@ -11,8 +11,17 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.listen(3000||process.env.PORT,()=>{
+app.listen(process.env.PORT,()=>{
     console.log('server running on http://localhost:3000')
+})
+
+app.get('/', function(req, res){
+    var alldir = `
+    <a href='login'>login</a><br/>
+    <a href='register'>register</a><br/>
+    <a href='login'>login</a><br/>
+    `;
+    res.send(alldir);
 })
 
 //addcard
@@ -59,16 +68,16 @@ app.get('/login', async function(req, res){
     res.sendFile(__dirname+'/view/login.html');
 })
 app.post('/login', async function(req, res){
-    loginUser(req.body.email, req.body.pass);
-    res.send('login');
+    var result = await loginUser(req.body.email, req.body.pass);
+    res.send(result);
 })
 
 app.get('/register', async function(req, res){
     res.sendFile(__dirname+'/view/register.html');
 })
 app.post('/register', async function(req, res){
-    registerUser(req.body.email, req.body.pass)
-    res.send('registereed');
+    var success = await registerUser(req.body.email, req.body.pass)
+    res.send(success);
 })
 
 

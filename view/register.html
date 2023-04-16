@@ -19,7 +19,13 @@
 	<link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body id='bd'>
-<div class="container">
+	<div class="alert alert-success" id="successalert" role="alert" hidden>
+		Registration successful!
+	</div>
+	<div class="alert alert-warning" id="warmingalert" role="alert" hidden>
+		User with this email already exist
+	</div>
+	<div class="container">
 	<div class="d-flex justify-content-center h-100">
 		<div class="card" style='height:400px'>
 			<div class="card-header">
@@ -31,25 +37,25 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-user"></i></span>
 						</div>
-						<input type="text" class="form-control" name="email"  placeholder="email address">
+						<input required type="email" class="form-control" name="email"  placeholder="email address">
 					</div>
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
 						</div>
-						<input type="password" class="form-control" name="pass" placeholder="password">
+						<input required type="password" class="form-control" name="pass" placeholder="password">
 					</div>
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
 						</div>
-						<input type="password" class="form-control" name="cpass"  placeholder="confirm password">
+						<input required type="password" class="form-control" name="cpass"  placeholder="confirm password">
 					</div>
 					<div class="row align-items-center remember">
 						<input type="checkbox" name="rememberme">Remember Me
 					</div>
 					<div class="form-group">
-						<input type="submit" value="Register" class="btn float-right login_btn">
+						<input type="button" value="Register" class="btn float-right login_btn">
 					</div>
 				</form>
 			</div>
@@ -64,5 +70,48 @@
 		</div>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+			
+	var pass;
+	var cpass;
+	var email;
+	$(document).ready(function(){
+		var btn = $('input[type=button]');
+		var passinp = $('input[name=pass]')
+		var cpassinp = $('input[name=cpass]')
+		var emailinp = $('input[name=email]')
+
+		btn.prop('disabled', true);
+
+		$('input[name=cpass],input[name=pass],input[name=email]').on('change', function(){
+			btn.prop('disabled', true);
+			pass = passinp.val();
+			cpass = cpassinp.val();
+			email = emailinp.val();
+			if(pass==cpass && email.trim()!== ""){
+				console.log('Matched')
+				btn.prop('disabled', false);
+			}
+			console.log(`${pass} == ${cpass}`);
+		})
+		btn.click(handleRegister);
+	})
+
+	async function handleRegister() {
+		axios.post('/register', {
+			email: email,
+			pass: pass
+		}).then(function(res){
+			console.log(res);
+			if(res.data){
+				$('#successalert').prop('hidden', false);
+				document.location.href='/login';
+			}else{
+				$('#successalert').prop('hidden', false);
+			}
+		})
+	}
+</script>
 </body>
 </html>
