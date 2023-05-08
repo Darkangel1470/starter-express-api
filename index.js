@@ -22,7 +22,7 @@ app.use(session({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.listen(process.env.PORT,()=>{//3000
+app.listen(process.env.PORT|| 3000,()=>{//3000
     console.log('server running on http://localhost:3000')
 })
 app.get('/', function(req, res){
