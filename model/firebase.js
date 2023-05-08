@@ -3,7 +3,7 @@ module.exports = {
     db: null,
     initFirestore: function(){
         //initializing on cloud function
-        const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore')
+        const { getFirestore } = require('firebase-admin/firestore')
     
         var admin = require("firebase-admin");
         var serviceAccount = require("../dependencies/flashex-3ac92-firebase-adminsdk-yjpkq-a8b61b8d21.json");
@@ -13,12 +13,14 @@ module.exports = {
         });
         this.db = getFirestore();
     },
-    addCard: function(id,front,back,box,revdate){
+    addCard: async function(id,front,back,box,revdate,profile){
+        console.log('addcar func: '+profile);
         this.db.collection('cards').doc(`${id}`).set({
             front: front,
             back: back,
             box: box,
-            revdate: revdate
+            revdate: revdate,
+            email: profile
         });
     },
     getCard: async function(id){
@@ -31,9 +33,9 @@ module.exports = {
         }
         return card;
     },
-    getAllCard: async function(){
+    getAllCard: async function(profile){
         var cardRef = await this.db.collection('cards');
-        const snapshot = await cardRef.get();
+        const snapshot = await cardRef.where('email','==',profile).get();
         var cardlist = [];
         snapshot.forEach(doc => {
             var dd = doc.data();
@@ -75,9 +77,9 @@ module.exports = {
             cardlist.push(dd);
         })
     },
-    getTodayCookie: async function(today){
+    getTodayCookie: async function(today, profile){
         var cardRef = await this.db.collection('cards');
-        const snapshot = await cardRef.get();
+        const snapshot = await cardRef.where('email','==',profile).get();
         var cardlist = [];
         snapshot.forEach(doc => {
             var dd = doc.data();
@@ -101,6 +103,8 @@ module.exports = {
         }
     },
     registerUser: async function(email, pass){
+        console.log('emaill :>> ', email);
+        console.log('pass :>> ', pass);
         var res = await this.db.collection('users').where('email','==', email).get();
         console.log('res.empty :>> ', res.empty);
         if(!res.empty){
@@ -113,22 +117,27 @@ module.exports = {
             return true;
         }
     },
-    loginUser: async function(email,pass){
+    loginUser: async function(email, pass, session){
         var snapshot = await this.db.collection('users').where('email','==', email).get();
         if(snapshot.empty){
             console.log('wrong email')
+            session.status = 'wrong email';
             return false;
         }else{
             snapshot.forEach(user =>{
                 if(pass.trim() == user.data().pass.trim()){
-                    console.log('login success')
-                    return true
+                    console.log('login success');
+                    session.status = 'loggedin';
+                    session.profile = email;
+                    return email;
                 }
                 console.log('wrong password')
-                return 'Wrong password';
+                session.status = 'wrong password';
+                return false;
             })
         }
     }
+
 }
 
 
